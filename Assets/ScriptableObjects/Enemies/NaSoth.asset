@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f13fc9649355284a99ffabe418b4b7e, type: 3}
+  m_Name: NaSoth
+  m_EditorClassIdentifier: 
+  EnemyName: Na Soth
+  IsBoss: 1
+  IsRangedAndMeele: 1
+  IsRanged: 0
+  FollowRadius: 5
+  EnemyMovementSpeed: 0.8
+  CanCharge: 1
+  MaxHealth: 40
+  Armor: 15
+  BloodSplashColor: {r: 0.3207547, g: 0.01522583, b: 0, a: 1}
+  BloodSplashPrefab: {fileID: 3453540020478067991, guid: 5bf66dc63c7298e4680ba510d0406afe,
+    type: 3}
+  ExperienceValue: 479
+  StepAudioClip: {fileID: 0}
+  HitClip: {fileID: 0}
+  DeathClip: {fileID: 0}
+  BossSeesPlayerAudioClip: {fileID: 8300000, guid: 828e04743b83a4a44b3c5437bae5c28f,
+    type: 3}
+  AttackRadius: 1
+  AttackRate: 1.5
+  CastingRate: 1.75
+  AttackDamage: 5
+  EnemySpells:
+  - {fileID: 8420346075172272731, guid: 465ac0066787c2a4ebd5b0c59bed215d, type: 3}
+  - {fileID: 8167909832022189183, guid: bc8d519c01cfb1647bc8daf11224f224, type: 3}
+  ChargeRate: 2
+  ChargeRadius: 3
+  ChargeCooldown: 3
+  ChargeSpeedBoost: 3
+  ChargeDamage: 5
+  ChargeAudioClip: {fileID: 8300000, guid: 0461c369de1e6c44186b4d1c234a1ac7, type: 3}

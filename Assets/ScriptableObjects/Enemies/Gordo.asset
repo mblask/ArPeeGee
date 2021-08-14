@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f13fc9649355284a99ffabe418b4b7e, type: 3}
+  m_Name: Gordo
+  m_EditorClassIdentifier: 
+  EnemyName: Gordo
+  IsBoss: 0
+  IsRangedAndMeele: 0
+  IsRanged: 0
+  FollowRadius: 5
+  CanCharge: 1
+  Armor: 8
+  BloodSplashColor: {r: 0.24471478, g: 0.3773585, b: 0.24385902, a: 1}
+  BloodSplashPrefab: {fileID: 3453540020478067991, guid: 5bf66dc63c7298e4680ba510d0406afe,
+    type: 3}
+  ExperienceValue: 72
+  StepAudioClip: {fileID: 8300000, guid: dff30717090c44a44a0fca376af04e33, type: 3}
+  HitClip: {fileID: 8300000, guid: 599777691d3ec3b4eb159377b9daf2e4, type: 3}
+  DeathClip: {fileID: 8300000, guid: 6a89198d9f2fa83429e646f5e5a63f82, type: 3}
+  BossSeesPlayerAudioClip: {fileID: 0}
+  AttackRadius: 1.3
+  EnemySpells: []
+  ChargeRate: 2
+  ChargeRadius: 4
+  ChargeCooldown: 2
+  ChargeSpeedBoost: 3
+  ChargeDamage: 5
+  ChargeAudioClip: {fileID: 8300000, guid: 0461c369de1e6c44186b4d1c234a1ac7, type: 3}
