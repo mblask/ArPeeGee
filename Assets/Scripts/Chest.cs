@@ -7,8 +7,11 @@ public class Chest : Interactable
     public Sprite ChestOpen;
     public AudioClip OpenChestAudioClip;
 
+    private Camera _camera;
     private SpriteRenderer _chestSpriteRenderer;
     private ParticleSystem _chestPS;
+
+    private bool _chestLooted = false;
 
     [Header("Additional Chest Drop Settings")]
     public Vector2Int MinMaxDroppable;
@@ -16,39 +19,37 @@ public class Chest : Interactable
 
     private void Start()
     {
+        _camera = Camera.main;
         _chestSpriteRenderer = GetComponent<SpriteRenderer>();
         _chestPS = GetComponentInChildren<ParticleSystem>();
     }
 
     public override void Interact()
     {
-        InteractWithChest();
-    }
-
-    public void InteractWithChest()
-    {
-        _chestSpriteRenderer.sprite = ChestOpen;
-        AudioManager.Instance.SFXAudioSource.PlayOneShot(OpenChestAudioClip);
-        GameManager.Instance.DropTreasureController.SetMinMaxDroppable(MinMaxDroppable);
-        GameManager.Instance.DropTreasureController.SetDropFrequencyModifier(DropFrequencyModifier);
-        GameManager.Instance.DropTreasureController.DropItems(transform);
-
-        if (_chestPS != null && _chestPS.IsAlive())
+        if (!_chestLooted)
         {
-            _chestPS.Stop();
+            _chestLooted = true;
+
+            _chestSpriteRenderer.sprite = ChestOpen;
+            AudioManager.Instance.SFXAudioSource.PlayOneShot(OpenChestAudioClip);
+            DropTreasure.Instance.SetMinMaxDroppable(MinMaxDroppable);
+            DropTreasure.Instance.SetDropFrequencyModifier(DropFrequencyModifier);
+            DropTreasure.Instance.DropItems(transform);
+
+            if (_chestPS != null && _chestPS.IsAlive())
+            {
+                _chestPS.Stop();
+            }
         }
     }
 
     private void OnMouseOver()
     {
-        if (gameObject != null)
-        {
-            GameManager.Instance.ShowItemNamePanel("Chest", transform);
-        }
+        ItemNamePanel.Instance?.SetupPanel(_camera.WorldToScreenPoint(transform.position), "Chest");
     }
 
     private void OnMouseExit()
     {
-        GameManager.Instance.HideItemNamePanel();
+        ItemNamePanel.Instance?.ShowItemNamePanel(false);
     }
 }

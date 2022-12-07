@@ -4,7 +4,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 public static class SaveSystem
 {
-    public static void SavePlayer(GameObject playerPrefab, Transform playerSpawnPoint, PlayerStats playerStats, Inventory inventory, EquipmentManager equipment, PlayerController controller, GameManager gameManager)
+    public static void SavePlayer(GameObject playerPrefab, Transform playerSpawnPoint, PlayerStats playerStats, PlayerInventory inventory, EquipmentManager equipment, PlayerController controller, GameManager gameManager)
     {
         BinaryFormatter formatter = new BinaryFormatter();
         string path = Application.persistentDataPath + "/ArPeeGeeGameSaveData.fun";

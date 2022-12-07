@@ -18,8 +18,8 @@ public class GameManager : MonoBehaviour
     [Header("Game Camera")]
     public GameObject MainCamera;
 
-    [Header("Drop Treasure Controller")]
-    public DropTreasure DropTreasureController;
+    //[Header("Drop Treasure Controller")]
+    //public DropTreasure DropTreasureController;
 
     [Header("Game Cursors")]
     public Texture2D DefaultCursor;
@@ -36,6 +36,8 @@ public class GameManager : MonoBehaviour
     private GameObject _currentPlayerPrefab;
     private GameObject _playerObject;
     private FollowTarget _mainCameraFollowTarget;
+    private Camera _camera;
+
     private int _enemiesKilled = 0;
     public int EnemiesKilled => _enemiesKilled;
 
@@ -56,6 +58,8 @@ public class GameManager : MonoBehaviour
         GeneratePlayer();
 
         Time.timeScale = 1.0f;
+
+        _camera = Camera.main;
     }
     #endregion
 
@@ -164,6 +168,26 @@ public class GameManager : MonoBehaviour
 
     public void SetupInventory()
     {
+        if (PlayerInventory.Instance._items.Count != 0)
+        {
+            PlayerInventory.Instance.RemoveAllItems();
+        }
+
+        if (PlayerData != null)
+        {
+            foreach (string itemName in PlayerData.InventoryItems)
+            {
+                //Debug.Log(itemName);
+                foreach (Item item in Treasure)
+                {
+                    if (item.ItemName == itemName)
+                    {
+                        PlayerInventory.Instance.AddItem(item);
+                    }
+                }
+            }
+        }
+
         if (Inventory.Instance._items.Count != 0)
         {
             Inventory.Instance.RemoveAllItems();
@@ -228,7 +252,7 @@ public class GameManager : MonoBehaviour
 
     public void SavePlayerData()
     {
-        PlayerData playerSaveData = new PlayerData(_currentPlayerPrefab, PlayerSpawnTransform, PlayerStats.Instance, Inventory.Instance, EquipmentManager.Instance, PlayerController.Instance, Instance);
+        PlayerData playerSaveData = new PlayerData(_currentPlayerPrefab, PlayerSpawnTransform, PlayerStats.Instance, PlayerInventory.Instance, EquipmentManager.Instance, PlayerController.Instance, Instance);
 
         SaveSystem.SavePlayer(playerSaveData);
     }
@@ -261,27 +285,4 @@ public class GameManager : MonoBehaviour
     {
         _enemiesKilled++;
     }
-
-    #region Panels
-
-    public void ShowItemNamePanel(string itemName, Transform itemTransform)
-    {
-        ItemNamePanel.transform.position = Camera.main.WorldToScreenPoint((Vector2)itemTransform.position + Vector2.up * ItemNameOffset);
-        ItemNamePanel.SetItemNamePanelText(itemName);
-        ItemNamePanel.ShowItemNamePanel(true);
-    }
-
-    public void ShowItemNamePanel(string itemName, Vector2 position)
-    {
-        ItemNamePanel.transform.position = Camera.main.WorldToScreenPoint(position + Vector2.up * ItemNameOffset);
-        ItemNamePanel.SetItemNamePanelText(itemName);
-        ItemNamePanel.ShowItemNamePanel(true);
-    }
-
-    public void HideItemNamePanel()
-    {
-        ItemNamePanel.ShowItemNamePanel(false);
-    }
-
-    #endregion
 }

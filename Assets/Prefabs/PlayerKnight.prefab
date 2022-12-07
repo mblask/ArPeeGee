@@ -112,6 +112,9 @@ GameObject:
   - component: {fileID: 5800467847185013552}
   - component: {fileID: 2484005845701052618}
   - component: {fileID: 4812594314381608458}
+  - component: {fileID: 8226685247371599625}
+  - component: {fileID: 5098603772378134900}
+  - component: {fileID: 3742962575468140531}
   m_Layer: 9
   m_Name: PlayerKnight
   m_TagString: Player
@@ -214,7 +217,7 @@ MonoBehaviour:
   _learnedSpells: []
   CurrentSpellIndex: 0
   ProjectileCastingAudioClip: {fileID: 0}
-  DestinationOffset: 0.1
+  _destinationOffset: 0.05
   BloodSplashColor: {r: 1, g: 0, b: 0, a: 1}
   BloodSplashPrefab: {fileID: 3453540020478067991, guid: 5bf66dc63c7298e4680ba510d0406afe,
     type: 3}
@@ -230,7 +233,6 @@ MonoBehaviour:
   _enemyAttackDistance: 1
   _focus: {fileID: 0}
   _currentEnemy: {fileID: 0}
-  _currentInteractable: {fileID: 0}
   _weaponSlot: {fileID: 348662946}
 --- !u!114 &2484005845701052618
 MonoBehaviour:
@@ -287,7 +289,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5800467847185013553}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8a6d5077f98df82458d4b67ea253cc43, type: 3}
   m_Name: 
@@ -295,6 +297,55 @@ MonoBehaviour:
   Size: 12
   _items: []
   ThrowDistance: 1
+--- !u!114 &8226685247371599625
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5800467847185013553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1649df71d984cb342941c7dcc740feb8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _focus: {fileID: 0}
+--- !u!114 &5098603772378134900
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5800467847185013553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d5a122dec277a84aa04605cc609fc7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Size: 12
+  _items: []
+  ThrowDistance: 0
+--- !u!114 &3742962575468140531
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5800467847185013553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82f6de1d67b5fb14185e3625d23ceb71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _equipSlots:
+  - EquipmentSlot: 1
+    _item: {fileID: 0}
+  - EquipmentSlot: 0
+    _item: {fileID: 0}
+  - EquipmentSlot: 2
+    _item: {fileID: 0}
+  - EquipmentSlot: 2
+    _item: {fileID: 0}
 --- !u!1 &5800467847595600251
 GameObject:
   m_ObjectHideFlags: 0

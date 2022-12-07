@@ -18,7 +18,7 @@ public class PlayerData
     public int EnemiesKilled;
 
 
-    public PlayerData(GameObject playerPrefab, Transform playerSpawnPoint, PlayerStats playerStats, Inventory inventory, EquipmentManager equipment, PlayerController controller, GameManager gameManager)
+    public PlayerData(GameObject playerPrefab, Transform playerSpawnPoint, PlayerStats playerStats, PlayerInventory inventory, EquipmentManager equipment, PlayerController controller, GameManager gameManager)
     {
         PlayerObjectName = playerPrefab.gameObject.name;
 
@@ -70,6 +70,18 @@ public class PlayerData
                 else
                     EquippedItems[i] = equipment.CurrentEquipment[i].ItemName;
             }
+            /*
+            int equippedItemsCount = equipment.GetEquipmentSlots().Length;
+            EquippedItems = new string[equippedItemsCount];
+
+            for (int i = 0; i < equippedItemsCount; i++)
+            {
+                if (equipment.GetEquipmentSlots()[i] == null)
+                    EquippedItems[i] = "";
+                else
+                    EquippedItems[i] = equipment.GetEquipmentSlots()[i].GetEquipment().ItemName;
+            }
+            */
         }
 
         if (controller != null)

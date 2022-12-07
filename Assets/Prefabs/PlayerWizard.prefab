@@ -15,6 +15,9 @@ GameObject:
   - component: {fileID: 7555978575706269762}
   - component: {fileID: 7555978575706269763}
   - component: {fileID: 7555978575706269760}
+  - component: {fileID: 7516975861001045174}
+  - component: {fileID: 307000055048450505}
+  - component: {fileID: -6330770163442694919}
   m_Layer: 9
   m_Name: PlayerWizard
   m_TagString: Player
@@ -122,7 +125,7 @@ MonoBehaviour:
   CurrentSpellIndex: 0
   ProjectileCastingAudioClip: {fileID: 8300000, guid: ac31f3e00ece6144891bf444b4d867bf,
     type: 3}
-  DestinationOffset: 0.1
+  _destinationOffset: 0.05
   BloodSplashColor: {r: 1, g: 0, b: 0, a: 1}
   BloodSplashPrefab: {fileID: 3453540020478067991, guid: 5bf66dc63c7298e4680ba510d0406afe,
     type: 3}
@@ -138,7 +141,6 @@ MonoBehaviour:
   _enemyAttackDistance: 1
   _focus: {fileID: 0}
   _currentEnemy: {fileID: 0}
-  _currentInteractable: {fileID: 0}
   _weaponSlot: {fileID: 7555978575811086565}
 --- !u!114 &7555978575706269763
 MonoBehaviour:
@@ -195,7 +197,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7555978575706269791}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8a6d5077f98df82458d4b67ea253cc43, type: 3}
   m_Name: 
@@ -203,6 +205,55 @@ MonoBehaviour:
   Size: 12
   _items: []
   ThrowDistance: 1
+--- !u!114 &7516975861001045174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7555978575706269791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1649df71d984cb342941c7dcc740feb8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _focus: {fileID: 0}
+--- !u!114 &307000055048450505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7555978575706269791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d5a122dec277a84aa04605cc609fc7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Size: 12
+  _items: []
+  ThrowDistance: 0
+--- !u!114 &-6330770163442694919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7555978575706269791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82f6de1d67b5fb14185e3625d23ceb71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _equipSlots:
+  - EquipmentSlot: 1
+    _item: {fileID: 0}
+  - EquipmentSlot: 0
+    _item: {fileID: 0}
+  - EquipmentSlot: 2
+    _item: {fileID: 0}
+  - EquipmentSlot: 2
+    _item: {fileID: 0}
 --- !u!1 &7555978575811086563
 GameObject:
   m_ObjectHideFlags: 0

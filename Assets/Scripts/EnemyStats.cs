@@ -63,8 +63,8 @@ public class EnemyStats : MonoBehaviour
     {
         _enemyController.IsDead = true;
         GameManager.Instance.UpdateEnemiesKilled();
-        GameManager.Instance.DropTreasureController.DropItems(transform);
-        GameManager.Instance.DropTreasureController.DropOneItem(_enemyController.DropSpecificItem, transform);
+        DropTreasure.Instance.DropItems(transform);
+        DropTreasure.Instance.DropOneItem(_enemyController.DropSpecificItem, transform);
         PlayerStats.Instance.UpdateExperience(_enemyData.ExperienceValue);
         _enemyController.Animator.SetTrigger("Dead");
         _enemyController.Animator.SetBool("IsDead", _enemyController.IsDead);

@@ -33,6 +33,11 @@ public class Stat
             _modifiers.Remove(modifier);
     }
 
+    public void ClearModifiers()
+    {
+        _modifiers.Clear();
+    }
+
     public void SetTemporaryModified(bool value)
     {
         _isTemporaryModified = value;

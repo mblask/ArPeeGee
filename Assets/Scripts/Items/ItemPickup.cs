@@ -5,9 +5,11 @@ using UnityEngine;
 public class ItemPickup : Interactable
 {
     public Item Item;
+    private Camera _camera;
 
     private void Start()
     {
+        _camera = Camera.main;
         BringItemForward();
     }
 
@@ -20,13 +22,16 @@ public class ItemPickup : Interactable
 
     public void PickupItem()
     {
-        bool wasPickedUp = Inventory.Instance.AddItem(Item);
+        bool wasPickedUp = PlayerInventory.Instance.AddItem(Item);
 
         if (wasPickedUp)
         {
-            GameManager.Instance.HideItemNamePanel();
-            GameManager.Instance.SetCursor(CursorType.Default);
-            AudioManager.Instance.SFXAudioSource.PlayOneShot(AudioManager.Instance.ItemPickupAudioClip);
+            ItemNamePanel.Instance?.ShowItemNamePanel(false);
+            GameManager.Instance?.SetCursor(CursorType.Default);
+
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.SFXAudioSource.PlayOneShot(AudioManager.Instance.ItemPickupAudioClip);
+    
             Destroy(gameObject);
         }
 
@@ -40,14 +45,11 @@ public class ItemPickup : Interactable
 
     private void OnMouseOver()
     {
-        if (gameObject != null)
-        {
-            GameManager.Instance.ShowItemNamePanel(Item.ItemName, transform);
-        }
+        ItemNamePanel.Instance?.SetupPanel(_camera.WorldToScreenPoint(transform.position), Item.ItemName);
     }
     
     private void OnMouseExit()
     {
-        GameManager.Instance.HideItemNamePanel();
+        ItemNamePanel.Instance?.ShowItemNamePanel(false);
     }
 }

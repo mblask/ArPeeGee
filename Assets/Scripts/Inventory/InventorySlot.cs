@@ -11,15 +11,15 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public Image Icon;
     public Button RemoveButton;
 
-    private Item _item;
+    [SerializeField] private Item _item;
 
-    [SerializeField] private ItemTooltip _tooltip;
+    //[SerializeField] private ItemTooltip _tooltip;
 
-    private void Awake()
-    {
-        if (_tooltip == null)
-            _tooltip = FindObjectOfType<ItemTooltip>();
-    }
+    //private void Awake()
+    //{
+    //    if (_tooltip == null)
+    //        _tooltip = FindObjectOfType<ItemTooltip>();
+    //}
 
     public void AddItemToInventorySlot(Item newItem)
     {
@@ -50,20 +50,36 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public void UseItem()
     {
         if (_item != null)
+        {
             _item.Use();
+        }
+    }
+
+    public Item GetItem()
+    {
+        return _item;
+    }
+
+    public bool IsEmpty()
+    {
+        return _item == null;
     }
 
     public void OnPointerEnter(PointerEventData pointerEventData)
     {
         if (_item != null/* && _item is Equipment*/)
         {
-            _tooltip.transform.position = pointerEventData.position;
-            _tooltip.ShowItemTooltip(/*(Equipment)*/_item);
+            ItemTooltip.Instance.transform.position = pointerEventData.position;
+            ItemTooltip.Instance.ShowItemTooltip(_item);
+
+            //_tooltip.transform.position = pointerEventData.position;
+            //_tooltip.ShowItemTooltip(/*(Equipment)*/_item);
         }
     }
 
     public void OnPointerExit(PointerEventData pointerEventData)
     {
-        _tooltip.HideItemTooltip();
+        ItemTooltip.Instance.HideItemTooltip();
+        //_tooltip.HideItemTooltip();
     }
 }

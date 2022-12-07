@@ -8,7 +8,7 @@ public class PlayerSprite : MonoBehaviour
 
     public void PlayOnStep()
     {
-        if (SteppingAudioClip != null)
+        if (SteppingAudioClip != null && AudioManager.Instance != null)
             AudioManager.Instance.SFXAudioSource.PlayOneShot(SteppingAudioClip);
     }
 }

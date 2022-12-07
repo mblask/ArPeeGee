@@ -4,6 +4,15 @@ using UnityEngine;
 
 public class DropTreasure : MonoBehaviour
 {
+    private static DropTreasure _instance;
+    public static DropTreasure Instance
+    {
+        get
+        {
+            return _instance;
+        }
+    }
+
     public Vector2Int MinMaxDroppable;
 
     public Item TestItem;
@@ -24,6 +33,11 @@ public class DropTreasure : MonoBehaviour
     private Vector2 _dropOffset = Vector2.down;
     private List<Item> _treasure = new List<Item>();
     private List<Item> _droppableItemsPool = new List<Item>();
+
+    private void Awake()
+    {
+        _instance = this;
+    }
 
     private void Start()
     {

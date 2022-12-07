@@ -92,6 +92,9 @@ public class PlayerStats : MonoBehaviour
     private Slider _playerMagicSlider;
     private Text _playerMagicText;
 
+    private EquipmentManager _equipmentManager;
+    private PlayerEquipment _playerEquipment;
+
     public delegate void OnPlayerStatsChange();
     public OnPlayerStatsChange onPlayerStatsChange;
 
@@ -116,15 +119,28 @@ public class PlayerStats : MonoBehaviour
         _playerHealthPanel = GameObject.Find(HealthPanelName);
         _playerMagicPanel = GameObject.Find(MagicPanelName);
 
-        _playerHealthSlider = _playerHealthPanel.GetComponentInChildren<Slider>();
-        _playerHealthText = _playerHealthPanel.GetComponentInChildren<Text>();
-        _playerMagicSlider = _playerMagicPanel.GetComponentInChildren<Slider>();
-        _playerMagicText = _playerMagicPanel.GetComponentInChildren<Text>();
+        if (_playerHealthPanel != null)
+        {
+            _playerHealthSlider = _playerHealthPanel.GetComponentInChildren<Slider>();
+            _playerHealthText = _playerHealthPanel.GetComponentInChildren<Text>();
+        }
+        
+        if (_playerMagicPanel != null)
+        {
+            _playerMagicSlider = _playerMagicPanel.GetComponentInChildren<Slider>();
+            _playerMagicText = _playerMagicPanel.GetComponentInChildren<Text>();
+        }
 
         UpdateHealth(TotalHealth.GetValue());
         UpdateMagic(TotalMagic.GetValue());
 
-        EquipmentManager.Instance.onEquipmentChanged += UpdatePlayerStats;
+        _equipmentManager = EquipmentManager.Instance;
+        if (_equipmentManager != null)
+            _equipmentManager.onEquipmentChanged += UpdatePlayerStats;
+
+        _playerEquipment = PlayerEquipment.Instance;
+        if (_playerEquipment != null)
+            _playerEquipment.onEquipmentChanged += UpdatePlayerStats;
     }
 
     private void Update()
@@ -303,6 +319,9 @@ public class PlayerStats : MonoBehaviour
 
     public void UpdateHealthSlider()
     {
+        if (_playerHealthSlider == null)
+            return;
+
         _playerHealthSlider.maxValue = TotalHealth.GetValue();
         _playerHealthSlider.value = _currentHealth;
         _playerHealthText.text = _currentHealth.ToString("F0") + "/" + TotalHealth.GetValue().ToString("F0");
@@ -310,9 +329,59 @@ public class PlayerStats : MonoBehaviour
 
     public void UpdateMagicSlider()
     {
+        if (_playerMagicSlider == null)
+            return;
+
         _playerMagicSlider.maxValue = TotalMagic.GetValue();
         _playerMagicSlider.value = _currentMagic;
         _playerMagicText.text = _currentMagic.ToString("F0") + "/" + TotalMagic.GetValue().ToString("F0");
+    }
+
+    public void UpdatePlayerStats(List<EquipSlot> equipSlots)
+    {
+        ClearStatModifiers();
+
+        foreach (EquipSlot equipSlot in equipSlots)
+        {
+            if (equipSlot.IsEmpty())
+                continue;
+
+            Equipment slotEquipment = equipSlot.GetItem() as Equipment;
+
+            UpdateStats(slotEquipment);
+        }
+
+        onPlayerStatsChange?.Invoke();
+    }
+
+    public void UpdateStats(Equipment equipment)
+    {
+        TotalHealth.AddModifier(equipment.HealthModifier);
+        UpdateHealthSlider();
+        TotalMagic.AddModifier(equipment.MagicModifier);
+        UpdateMagicSlider();
+        TotalMovementSpeed.AddModifier(equipment.MovementSpeedModifier);
+        TotalArmor.AddModifier(equipment.ArmorModifier);
+        TotalDamage.AddModifier(equipment.DamageModifier);
+        TotalAttackRate.AddModifier(equipment.AttackRateModifier);
+        TotalCastingRate.AddModifier(equipment.CastingRateModifier);
+        TotalHealthRegenRate.AddModifier(equipment.HealthRegenModifier);
+        TotalMagicRegenRate.AddModifier(equipment.MagicRegenModifier);
+    }
+
+    public void ClearStatModifiers()
+    {
+        TotalHealth.ClearModifiers();
+        UpdateHealthSlider();
+        TotalMagic.ClearModifiers();
+        UpdateMagicSlider();
+        TotalMovementSpeed.ClearModifiers();
+        TotalArmor.ClearModifiers();
+        TotalDamage.ClearModifiers();
+        TotalAttackRate.ClearModifiers();
+        TotalCastingRate.ClearModifiers();
+        TotalHealthRegenRate.ClearModifiers();
+        TotalMagicRegenRate.ClearModifiers();
     }
 
     public void UpdatePlayerStats(Equipment newItem, Equipment oldItem)

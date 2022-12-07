@@ -22,21 +22,20 @@ public class PlayerController : MonoBehaviour
     public AudioClip ProjectileCastingAudioClip;
 
     [Header("General Settings")]
-    public float DestinationOffset = 0.05f;
+    [SerializeField] private float _destinationOffset = 0.05f;
     public Color BloodSplashColor;
     public ParticleSystem BloodSplashPrefab;
     public LayerMask EnemyLayerMask;
     public LayerMask Obstacles;
 
     [Header("Read-only")]
-    [SerializeField] private bool _shouldMove = false;
+    [SerializeField] private bool _shouldMove = true;
     [SerializeField] private float _nextAttackTime = 0.0f;
     [SerializeField] private float _obstacleDistance = 0.4f;
     [SerializeField] private float _enemyAttackDistance = 0.7f;
     [SerializeField] private Interactable _focus = null;
 
     [SerializeField] private Collider2D _currentEnemy = null;
-    [SerializeField] private Interactable _currentInteractable = null;
 
     //private GameObject _currentMeelePanel;
     private CurrentSpellPanel _currentSpellPanel;
@@ -51,6 +50,8 @@ public class PlayerController : MonoBehaviour
 
     private Rigidbody2D _rigidbody2d;
     private Animator _playerAnimator;
+    private PlayerInteraction _playerInteraction;
+    private Camera _camera;
 
     [Header("Read-only: Weapon Slot")]
     [SerializeField] private WeaponSlot _weaponSlot;
@@ -62,12 +63,14 @@ public class PlayerController : MonoBehaviour
 
         _rigidbody2d = GetComponent<Rigidbody2D>();
         _playerAnimator = GetComponentInChildren<Animator>();
-
         _weaponSlotAnimator = _weaponSlot.GetComponent<Animator>();
+        _camera = Camera.main;
     }
 
     private void Start()
     {
+        _playerInteraction = PlayerInteraction.Instance;
+
         if (IsRanged)
         {
             //Not used currently
@@ -92,62 +95,18 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.W))
             ChangeActiveSpell();
 
+        
         if (Input.GetKey(KeyCode.Mouse0))
         {
             _shouldMove = true;
-
-            Vector3 mouseInputPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast(mouseInputPosition, Vector2.up, _rightClickRaycastDistance);
-
-            if (hit)
-            {
-                Interactable interactable = hit.collider.GetComponent<Interactable>();
-                if (interactable != null && _currentInteractable != interactable)
-                {
-                    if (!interactable.transform.IsChildOf(_weaponSlot.transform))
-                    {
-                        SetFocus(interactable);
-
-                        float distance = Vector2.Distance(transform.position, hit.collider.transform.position);
-                        if (distance >= interactable.InteractionRadius)
-                        {
-                            _destination = hit.collider.transform.position;
-
-                            _shouldMove = true;
-                            _currentInteractable = null;
-                        }
-                        else
-                        {
-                            _shouldMove = false;
-                            if (!interactable.HasInteracted)
-                            {
-                                interactable.Interact();
-                                interactable.HasInteracted = true;
-                                _currentInteractable = interactable;
-                                RemoveFocus();
-                            }
-                        }
-                    }                    
-                }
-            }
-            else
-            {
-                _destination = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                if (_focus != null)
-                    RemoveFocus();
-
-                _currentInteractable = null;
-            }
+            _destination = _camera.ScreenToWorldPoint(Input.mousePosition);
         }
-
-        if (Input.GetKeyUp(KeyCode.Mouse0))
-            _currentInteractable = null;
-
+        
         if (Input.GetKey(KeyCode.Mouse1))
         {
             if (_currentEnemy != null)
             {
-                if (!_currentEnemy.gameObject.GetComponent<EnemyController>().IsDead)
+                if (!_currentEnemy.GetComponent<EnemyController>().IsDead)
                 {
                     if (IsRanged && !_shouldMove && PlayerStats.Instance.CurrentMagic >= _learnedSpells[CurrentSpellIndex].GetComponent<Spell>().BaseSpellCost)
                     {
@@ -173,7 +132,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                Vector3 mouseInputPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector3 mouseInputPosition = _camera.ScreenToWorldPoint(Input.mousePosition);
                 RaycastHit2D enemyHit = Physics2D.Raycast(mouseInputPosition, Vector2.up, _rightClickRaycastDistance, EnemyLayerMask);
 
                 if (enemyHit)
@@ -184,7 +143,7 @@ public class PlayerController : MonoBehaviour
                 {
                     _shouldMove = false;
                     _destination = transform.position;
-                    RemoveFocus();
+                    _playerInteraction.RemoveFocus();
 
                     if (Input.GetKey(KeyCode.LeftShift))
                     {
@@ -212,53 +171,46 @@ public class PlayerController : MonoBehaviour
         _weaponSlotAnimator.SetBool("IsMoving", _shouldMove);
     }
 
-    #region Interactable Focus
-    public void SetFocus(Interactable newFocus)
-    {
-        if (newFocus != _focus)
-        {
-            if (_focus != null)
-                _focus.OnDefocus();
-
-            _focus = newFocus;
-            _focus.OnFocus(transform);
-        }
-    }
-
-    public void RemoveFocus()
-    {
-        if (_focus != null)
-            _focus.OnDefocus();
-
-        _focus = null;
-    }
-    #endregion
-
     #region Sprite Movement and Flipping
-    private void MoveToDestination(Vector2 destination)
+    public void MoveToDestination(Vector2 destination)
     {
         Vector2 direction = (destination - _rigidbody2d.position).normalized;
         FlipSprite(direction.x);
 
         float distance = Vector2.Distance(destination, _rigidbody2d.position);
 
-        if (distance >= DestinationOffset)
-        {
+        if (distance >= _destinationOffset)
             _rigidbody2d.MovePosition(_rigidbody2d.position + direction * PlayerStats.Instance.TotalMovementSpeed.GetValue() * Time.fixedDeltaTime);
-        }
         else
-        {
             _shouldMove = false;
-        }
 
         RaycastHit2D hitInfo = Physics2D.Raycast(transform.position, direction, _obstacleDistance, Obstacles);
         if (hitInfo.collider != null)
-        {
             _shouldMove = false;
-        }
     }
 
-    private void FlipSprite(float direction)
+    public void StopMovement()
+    {
+        _shouldMove = false;
+        _destination = transform.position;
+    }
+
+    public void SetDestination(Vector3 destination)
+    {
+        _destination = destination;
+    }
+
+    public void ShouldMove(bool value)
+    {
+        _shouldMove = value;
+    }
+
+    public bool IsMoving()
+    {
+        return _shouldMove;
+    }
+
+    public void FlipSprite(float direction)
     {
         Vector3 localScale = transform.localScale;
         if (direction > 0.0f)
@@ -280,7 +232,7 @@ public class PlayerController : MonoBehaviour
     {
         _weaponSlotAnimator.SetBool("IsMoving", _shouldMove);
 
-        Vector2 mouseClickPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 mouseClickPoint = _camera.ScreenToWorldPoint(Input.mousePosition);
         Vector2 direction = (mouseClickPoint - _rigidbody2d.position).normalized;
         FlipSprite(direction.x);
 

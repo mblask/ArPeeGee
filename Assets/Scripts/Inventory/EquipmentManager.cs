@@ -82,7 +82,7 @@ public class EquipmentManager : MonoBehaviour
                         continue;
                     }
 
-                    if (_inventory.IsFull)
+                    if (_inventory.IsFull())
                     {
                         _inventory.onInventoryFull.Invoke();
                         return false;

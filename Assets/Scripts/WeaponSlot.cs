@@ -16,7 +16,12 @@ public class WeaponSlot : MonoBehaviour
 
     private void Start()
     {
-        EquipmentManager.Instance.onEquipmentChanged += SetupWeaponSlot;
+        InventoryEquipmentUI.Instance.OnWeaponChanged += SetupWeapon;
+
+        if (EquipmentManager.Instance != null)
+        {
+            EquipmentManager.Instance.onEquipmentChanged += SetupWeaponSlot;
+        }
         _animator = GetComponent<Animator>();
     }
 

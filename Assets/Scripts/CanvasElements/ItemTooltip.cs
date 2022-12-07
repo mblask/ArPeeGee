@@ -6,13 +6,30 @@ using System.Text;
 
 public class ItemTooltip : MonoBehaviour
 {
+    private static ItemTooltip _instance;
+    public static ItemTooltip Instance
+    {
+        get
+        {
+            return _instance;
+        }
+    }
+
     public Text ItemName;
     public Text ItemStats;
 
     private StringBuilder sb = new StringBuilder();
 
+    private void Awake()
+    {
+        _instance = this;
+    }
+
     private void Start()
     {
+        if (InventoryEquipmentUI.Instance != null)
+            InventoryEquipmentUI.Instance.OnInventoryUIClose += HideItemTooltip;
+
         HideItemTooltip();
     }
 
@@ -22,7 +39,7 @@ public class ItemTooltip : MonoBehaviour
 
         ItemName.text = item.ItemName;
 
-        if (item.GetType() == typeof(Equipment))
+        if (item is Equipment)
         {
             ItemStats.gameObject.SetActive(true);
 

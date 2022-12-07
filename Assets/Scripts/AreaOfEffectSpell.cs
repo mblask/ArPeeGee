@@ -18,7 +18,7 @@ public class AreaOfEffectSpell : Spell
     [SerializeField] private float _aoeDamageModifier = 1.0f;
     [SerializeField] private string _casterTag = "";
 
-    private Transform _areaOfEffectOrigin = null;
+    private Transform _areaOfEffectOrigin;
 
     public void DealAreaDamage()
     {

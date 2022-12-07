@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 136d850ca9de42142922bd5e13fff481, type: 3}
+  m_Name: PesadillasCloak
+  m_EditorClassIdentifier: 
+  ItemName: Pesadilla's Cloak
+  ItemImage: {fileID: 21300000, guid: 0ad3da0a132dba341ba210b4ef1fe67e, type: 3}
+  ItemPrefab: {fileID: 7950549243325820766, guid: 9874be0424f1d0341a051baff81f1369,
+    type: 3}
+  DropFrequency: 10
+  EquipmentSlot: 0
+  ArmorModifier: 10
+  DamageModifier: 1
+  AttackRange: 0
+  AttackRateModifier: 0
+  CastingRateModifier: 0.4
+  HealthModifier: 10
+  MagicModifier: 20
+  MovementSpeedModifier: 0.3
+  HealthRegenModifier: 0
+  MagicRegenModifier: 0.5

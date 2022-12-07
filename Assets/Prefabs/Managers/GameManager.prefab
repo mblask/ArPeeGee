@@ -1,50 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4858311923528917701
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4858311923528917703}
-  - component: {fileID: 4858311923528917702}
-  m_Layer: 0
-  m_Name: DropTreasureObject
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &4858311923528917703
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4858311923528917701}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 4858311923963450475}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4858311923528917702
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4858311923528917701}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd1369b299760824f9dbb648fd29369b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MinMaxDroppable: {x: 0, y: 2}
-  TestItem: {fileID: 0}
 --- !u!1 &4858311923963450472
 GameObject:
   m_ObjectHideFlags: 0
@@ -72,8 +27,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 2.1249673, y: 1.7291753, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 4858311923528917703}
+  m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -107,7 +61,7 @@ MonoBehaviour:
   - {fileID: 7555978575706269791, guid: 49d326da91dcd4246b98b4a4a01b244c, type: 3}
   PlayerSpawnTransform: {fileID: 0}
   MainCamera: {fileID: 0}
-  DropTreasureController: {fileID: 4858311923528917702}
+  DropTreasureController: {fileID: 0}
   DefaultCursor: {fileID: 2800000, guid: 851e815935928aa45894377277718e16, type: 3}
   InteractableCursor: {fileID: 2800000, guid: 43aba98fc5bf98d40912f4c662dcd148, type: 3}
   hotspot: {x: 10, y: 10}

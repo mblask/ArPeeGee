@@ -4,20 +4,19 @@ using UnityEngine;
 
 public class Inventory : MonoBehaviour
 {
-    public static Inventory Instance;
+    private static Inventory _instance;
+
+    public static Inventory Instance
+    {
+        get
+        {
+            return _instance;
+        }
+    }
 
     public int Size = 12;
     public List<Item> _items;
     public float ThrowDistance = 0.0f;
-
-    public bool IsFull
-    {
-        get
-        {
-            bool value = _items.Count >= Size;
-            return value;
-        }
-    }
 
     public delegate void OnInventoryItemsChanged();
     public OnInventoryItemsChanged onInventoryItemsChanged;
@@ -30,7 +29,7 @@ public class Inventory : MonoBehaviour
 
     private void Awake()
     {
-        Instance = this;
+        _instance = this;
     }
 
     private void Start()
@@ -54,7 +53,7 @@ public class Inventory : MonoBehaviour
 
     public bool AddItem(Item item)
     {
-        if (IsFull)
+        if (IsFull())
         {
             if (onInventoryFull != null)
                 onInventoryFull.Invoke();
@@ -124,5 +123,15 @@ public class Inventory : MonoBehaviour
             if (onNoPotions != null)
                 onNoPotions.Invoke();
         }
+    }
+
+    public bool IsFull()
+    {
+        return _items.Count >= Size;
+    }
+
+    public List<Item> GetItems()
+    {
+        return _items;
     }
 }

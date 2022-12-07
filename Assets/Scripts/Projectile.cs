@@ -97,6 +97,7 @@ public class Projectile : Spell
                     }
                 }
             }
+
             DestroyObject();
         }
     }

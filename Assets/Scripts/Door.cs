@@ -16,9 +16,16 @@ public class Door : Interactable
     public AudioClip DoorCloseAudioClip;
     public AudioClip DoorLockedAudioClip;
 
+    private Camera _camera;
+
     private bool _isClosed = true;
     private const string SandboxLevelName = "Sandbox";
-    private const string DoorName = "Door";
+    private const string DOOR_NAME = "Door";
+
+    private void Awake()
+    {
+        _camera = Camera.main;
+    }
 
     public override void Interact()
     {
@@ -71,14 +78,11 @@ public class Door : Interactable
 
     private void OnMouseOver()
     {
-        if (gameObject != null)
-        {
-            GameManager.Instance.ShowItemNamePanel(DoorName, transform);
-        }
+        ItemNamePanel.Instance?.SetupPanel(_camera.WorldToScreenPoint(transform.position), DOOR_NAME);
     }
 
     private void OnMouseExit()
     {
-        GameManager.Instance.HideItemNamePanel();
+        ItemNamePanel.Instance?.ShowItemNamePanel(false);
     }
 }
