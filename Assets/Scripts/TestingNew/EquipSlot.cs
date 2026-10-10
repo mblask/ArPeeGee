@@ -6,7 +6,7 @@ public class EquipSlot
     public EquipmentSlot EquipmentSlot;
 
     [SerializeField] private Item _item;
-    private bool _empty = false;
+    private bool _empty = true;
 
     public void AddItem(Item item)
     {

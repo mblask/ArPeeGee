@@ -114,7 +114,7 @@ public class WeaponSlot : MonoBehaviour
         for (int i = 0; i < childrenCount; i++)
         {
             Transform child = transform.GetChild(i);
-            Debug.Log($"RemoveWeapon, child name: {child.name}");
+            //Debug.Log($"RemoveWeapon, child name: {child.name}");
             ItemPickup itemPickup = child.GetComponent<ItemPickup>();
             if (itemPickup == null)
                 continue;
