@@ -203,8 +203,8 @@ public class DropTreasure : MonoBehaviour
 
         GameObject itemClone = Instantiate(item.ItemPrefab, (Vector2)targetPosition.position + Vector2.down / 2.0f, Quaternion.AngleAxis(randomAngle, Vector3.forward));
         /**/
-        itemClone.GetComponent<ItemPickup>().Item = item;
-        itemClone.GetComponent<SpriteRenderer>().sprite = item.ItemImage;
+        itemClone.GetComponent<ItemPickup>().SetItem(item);
+        //itemClone.GetComponent<SpriteRenderer>().sprite = item.ItemImage;
         /**/
         itemClone.transform.SetParent(null);
     }
@@ -252,8 +252,9 @@ public class DropTreasure : MonoBehaviour
             GameObject itemClone = Instantiate(_droppableItemsPool[randomItemIndex].ItemPrefab, (Vector2)targetPosition.position + _dropOffset + itemDisplacement, 
                 Quaternion.AngleAxis(randomAngle, Vector3.forward));
             /**/
-            itemClone.GetComponent<ItemPickup>().Item = _droppableItemsPool[randomItemIndex];
-            itemClone.GetComponent<SpriteRenderer>().sprite = _droppableItemsPool[randomItemIndex].ItemImage;
+            Item item = _droppableItemsPool[randomItemIndex];
+            itemClone.GetComponent<ItemPickup>().SetItem(item);
+            //itemClone.GetComponent<SpriteRenderer>().sprite = _droppableItemsPool[randomItemIndex].ItemImage;
             /**/
             itemClone.transform.SetParent(null);
         }

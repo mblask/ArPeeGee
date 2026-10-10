@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerEquipment : MonoBehaviour
@@ -17,9 +16,9 @@ public class PlayerEquipment : MonoBehaviour
         }
     }
 
-    [SerializeField] private List<EquipSlot> _equipSlots;
+    [SerializeField] private List<EquipSlot> _equipSlots = new List<EquipSlot>();
 
-    private PlayerInventory _inventory;
+    private Inventory _inventory;
 
     private void Awake()
     {
@@ -31,7 +30,7 @@ public class PlayerEquipment : MonoBehaviour
         EquippedSlot.onRemoveFromEquippedSlot += RemoveItem;
     }
 
-    public void SetInventory(PlayerInventory inventory)
+    public void SetInventory(Inventory inventory)
     {
         _inventory = inventory;
     }
@@ -39,39 +38,40 @@ public class PlayerEquipment : MonoBehaviour
     public bool EquipItem(Item item)
     {
         Equipment equipment = item as Equipment;
+        if (_inventory == null)
+            _inventory = Inventory.Instance;
 
         int index = 0;
         foreach (EquipSlot slot in _equipSlots)
         {
-            if (slot.EquipmentSlot.Equals(equipment.EquipmentSlot))
-            {
-                index++;
+            if (!slot.EquipmentSlot.Equals(equipment.EquipmentSlot))
+                continue;
 
-                if (slot.IsEmpty())
-                {
-                    slot.AddItem(item);
-                    _inventory.RemoveItem(item);
-                    onEquipmentChanged?.Invoke(_equipSlots);
-                    return true;
-                }
-                else
-                {
-                    if (index < getNumOfSlots(slot.EquipmentSlot))
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        Item oldItem = slot.GetItem();
-                        slot.RemoveItem();
-                        slot.AddItem(item);
-                        _inventory.RemoveItem(item);
-                        _inventory.AddItem(oldItem);
-                        onEquipmentChanged?.Invoke(_equipSlots);
-                        return false;
-                    }
-                }
+            index++;
+
+            if (slot.IsEmpty())
+            {
+                Debug.Log($"Equip slot {slot.EquipmentSlot} is empty");
+                slot.AddItem(item);
+                _inventory.RemoveItem(item);
+                onEquipmentChanged?.Invoke(_equipSlots);
+                return true;
             }
+
+            Debug.Log($"Equip slot {slot.EquipmentSlot} is populated");
+            if (index < getNumOfSlots(slot.EquipmentSlot))
+                continue;
+
+            Item oldItem = slot.GetItem();
+            slot.RemoveItem();
+            slot.AddItem(item);
+            _inventory.RemoveItem(item);
+            
+            if (oldItem != null)
+                _inventory.AddItem(oldItem);
+            
+            onEquipmentChanged?.Invoke(_equipSlots);
+            return false;
         }
 
         return false;
@@ -79,26 +79,24 @@ public class PlayerEquipment : MonoBehaviour
 
     public void RemoveItem(Item item)
     {
+        Debug.Log("PlayerEquipment, RemoveItem");
         foreach (EquipSlot slot in _equipSlots)
         {
             if (slot.IsEmpty())
                 continue;
 
-            if (slot.GetItem().Equals(item))
-            {
-                slot.RemoveItem();
+            if (!slot.GetItem().Equals(item))
+                continue;
 
-                bool addedToInventory = _inventory.AddItem(item);
-                if (addedToInventory)
-                {
-                    return;
-                }
-                else
-                {
-                    EquipItem(item);
-                    return;
-                }
-            }
+            slot.RemoveItem();
+            onEquipmentChanged.Invoke(_equipSlots);
+
+            bool addedToInventory = _inventory.AddItem(item);
+            if (addedToInventory)
+                return;
+            
+            EquipItem(item);
+            return;
         }
     }
 

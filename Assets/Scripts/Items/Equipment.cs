@@ -18,10 +18,9 @@ public class Equipment : Item
 
     public override void Use()
     {
-        //if(EquipmentManager.Instance != null && EquipmentManager.Instance.Equip(this))
-        //    RemoveFromInventory();
+        if (PlayerEquipment.Instance == null)
+            return;
 
-        if (PlayerEquipment.Instance != null)
-            PlayerEquipment.Instance.EquipItem(this);
+        PlayerEquipment.Instance.EquipItem(this);
     }
 }

@@ -1,16 +1,44 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class ItemPickup : Interactable
 {
-    public Item Item;
+    [SerializeField]
+    private Item _item;
     private Camera _camera;
+
+    private Inventory _inventory;
+    private ItemNamePanel _itemNamePanel;
+    private GameManager _gameManager;
+    private AudioManager _audioManager;
+    private SpriteRenderer _spriteRenderer;
 
     private void Start()
     {
         _camera = Camera.main;
+        _inventory = Inventory.Instance;
+        _itemNamePanel = ItemNamePanel.Instance;
+        _gameManager = GameManager.Instance;
+        _audioManager = AudioManager.Instance;
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+
         BringItemForward();
+    }
+
+    public Item GetItem()
+    {
+        return _item;
+    }
+
+    public void SetItem(Item item)
+    {
+        Debug.Log($"SetItem item: {item == null}");
+
+        _item = item;
+
+        if (_spriteRenderer == null)
+            _spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+
+        _spriteRenderer.sprite = item.ItemImage;
     }
 
     public override void Interact()
@@ -22,15 +50,14 @@ public class ItemPickup : Interactable
 
     public void PickupItem()
     {
-        bool wasPickedUp = PlayerInventory.Instance.AddItem(Item);
+        Debug.Log($"PickupItem null {_item == null}");
+        bool wasPickedUp = _inventory.AddItem(_item);
 
         if (wasPickedUp)
         {
-            ItemNamePanel.Instance?.ShowItemNamePanel(false);
-            GameManager.Instance?.SetCursor(CursorType.Default);
-
-            if (AudioManager.Instance != null)
-                AudioManager.Instance.SFXAudioSource.PlayOneShot(AudioManager.Instance.ItemPickupAudioClip);
+            _itemNamePanel?.ShowItemNamePanel(false);
+            _gameManager?.SetCursor(CursorType.Default);
+            _audioManager?.SFXAudioSource.PlayOneShot(AudioManager.Instance.ItemPickupAudioClip);
     
             Destroy(gameObject);
         }
@@ -45,11 +72,18 @@ public class ItemPickup : Interactable
 
     private void OnMouseOver()
     {
-        ItemNamePanel.Instance?.SetupPanel(_camera.WorldToScreenPoint(transform.position), Item.ItemName);
+        Vector2 screenPosition = _camera.WorldToScreenPoint(transform.position);
+        if (_itemNamePanel == null)
+            return;
+
+        if (_item == null)
+            return;
+
+        _itemNamePanel.SetupPanel(screenPosition, _item.ItemName);
     }
     
     private void OnMouseExit()
     {
-        ItemNamePanel.Instance?.ShowItemNamePanel(false);
+        _itemNamePanel?.ShowItemNamePanel(false);
     }
 }

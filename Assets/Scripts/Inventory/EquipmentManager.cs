@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class EquipmentManager : MonoBehaviour
 {
@@ -28,6 +26,8 @@ public class EquipmentManager : MonoBehaviour
     private EquippedSlot[] _equippedSlots;
     public Equipment[] CurrentEquipment => _currentEquipment;
 
+    private AudioManager _audioManager;
+
     //private GameObject _equippedItems;
     //private const string EquippedItemsName = "EquippedItems";
 
@@ -36,6 +36,7 @@ public class EquipmentManager : MonoBehaviour
     private void Start()
     {
         _inventory = Inventory.Instance;
+        _audioManager = AudioManager.Instance;
 
         _equippedSlots = EquippedItems.GetComponentsInChildren<EquippedSlot>();
 
@@ -93,7 +94,7 @@ public class EquipmentManager : MonoBehaviour
                     oldItem = _currentEquipment[i];
                     _currentEquipment[i] = newItem;
                     _equippedSlots[i].AddToEquippedSlot(newItem);
-                    AudioManager.Instance.SFXAudioSource.PlayOneShot(EquipAudioClip);
+                    _audioManager.SFXAudioSource.PlayOneShot(EquipAudioClip);
                     successfulEquip = true;
                 }
                 else
@@ -103,7 +104,7 @@ public class EquipmentManager : MonoBehaviour
                     oldItem = null;
                     _currentEquipment[i] = newItem;
                     _equippedSlots[i].AddToEquippedSlot(newItem);
-                    AudioManager.Instance.SFXAudioSource.PlayOneShot(EquipAudioClip);
+                    _audioManager.SFXAudioSource.PlayOneShot(EquipAudioClip);
 
                     //Reset currentSlotIndex because we filled the slot
                     currentSlotIndex = 0;
@@ -138,7 +139,7 @@ public class EquipmentManager : MonoBehaviour
             
             _currentEquipment[slotIndex] = null;
 
-            AudioManager.Instance.SFXAudioSource.PlayOneShot(UnequipAudioClip);
+            _audioManager.SFXAudioSource.PlayOneShot(UnequipAudioClip);
 
             if (onEquipmentChanged != null)
                 onEquipmentChanged.Invoke(null, oldItem);
@@ -147,33 +148,33 @@ public class EquipmentManager : MonoBehaviour
 
     public void Unequip(Equipment item)
     {
-        if (item != null)
+        if (item == null)
         {
-            Equipment oldItem = item;
-
-            _inventory.AddItem(oldItem);
-
-            for (int i = 0; i < _currentEquipment.Length; i++)
-            {
-                if (_currentEquipment[i] == item)
-                {
-                    _currentEquipment[i] = null;
-                    break;
-                }
-            }
-
-            AudioManager.Instance.SFXAudioSource.PlayOneShot(UnequipAudioClip);
-
-            if (onEquipmentChanged != null)
-                onEquipmentChanged.Invoke(null, oldItem);
+            Debug.Log("Unequip, item is null");
+            return;
         }
+
+        //for (int i = 0; i < _currentEquipment.Length; i++)
+        //{
+        //    if (_currentEquipment[i] == item)
+        //    {
+        //        _currentEquipment[i] = null;
+        //        break;
+        //    }
+        //}
+
+        if (_audioManager == null)
+            _audioManager = AudioManager.Instance;
+
+        _audioManager.SFXAudioSource.PlayOneShot(UnequipAudioClip);
+
+        if (onEquipmentChanged != null)
+            onEquipmentChanged.Invoke(null, item);
     }
 
     public void UneqipAll()
     {
         for (int i = 0; i < _currentEquipment.Length; i++)
-        {
             Unequip(i);
-        }
     }   
 }

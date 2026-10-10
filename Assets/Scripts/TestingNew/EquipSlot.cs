@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [System.Serializable]
 public class EquipSlot
@@ -8,15 +6,18 @@ public class EquipSlot
     public EquipmentSlot EquipmentSlot;
 
     [SerializeField] private Item _item;
+    private bool _empty = false;
 
     public void AddItem(Item item)
     {
         _item = item;
+        _empty = false;
     }
 
     public void RemoveItem()
     {
         _item = null;
+        _empty = true;
     }
 
     public Item GetItem()
@@ -26,6 +27,6 @@ public class EquipSlot
 
     public bool IsEmpty()
     {
-        return _item == null;
+        return _empty;
     }
 }

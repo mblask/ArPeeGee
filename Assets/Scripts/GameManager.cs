@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -37,6 +36,7 @@ public class GameManager : MonoBehaviour
     private GameObject _playerObject;
     private FollowTarget _mainCameraFollowTarget;
     private Camera _camera;
+    private Inventory _inventory;
 
     private int _enemiesKilled = 0;
     public int EnemiesKilled => _enemiesKilled;
@@ -66,6 +66,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         _mainCameraFollowTarget = MainCamera.GetComponent<FollowTarget>();
+        _inventory = Inventory.Instance;
         if (_playerObject != null)
             _mainCameraFollowTarget.SetTargetToFollow(_playerObject.transform);
     }
@@ -157,10 +158,10 @@ public class GameManager : MonoBehaviour
             {
                 foreach (Item item in Treasure)
                 {
-                    if (item.ItemName == itemName)
-                    {
-                        EquipmentManager.Instance.Equip(item as Equipment);
-                    }
+                    if (item.ItemName != itemName)
+                        continue;
+                    
+                    EquipmentManager.Instance.Equip(item as Equipment);
                 }
             }
         }
@@ -168,30 +169,28 @@ public class GameManager : MonoBehaviour
 
     public void SetupInventory()
     {
-        if (PlayerInventory.Instance._items.Count != 0)
-        {
-            PlayerInventory.Instance.RemoveAllItems();
-        }
+        if (_inventory == null)
+            _inventory = Inventory.Instance;
+
+        if (_inventory._items.Count != 0)
+            _inventory.RemoveAllItems();
 
         if (PlayerData != null)
         {
             foreach (string itemName in PlayerData.InventoryItems)
             {
-                //Debug.Log(itemName);
                 foreach (Item item in Treasure)
                 {
-                    if (item.ItemName == itemName)
-                    {
-                        PlayerInventory.Instance.AddItem(item);
-                    }
+                    if (item.ItemName != itemName)
+                        continue;
+                    
+                    _inventory.AddItem(item);
                 }
             }
         }
 
-        if (Inventory.Instance._items.Count != 0)
-        {
-            Inventory.Instance.RemoveAllItems();
-        }
+        if (_inventory._items.Count != 0)
+            _inventory.RemoveAllItems();
 
         if (PlayerData != null)
         {
@@ -199,10 +198,10 @@ public class GameManager : MonoBehaviour
             {
                 foreach (Item item in Treasure)
                 {
-                    if (item.ItemName == itemName)
-                    {
-                        Inventory.Instance.AddItem(item);
-                    }
+                    if (item.ItemName != itemName)
+                        continue;
+                    
+                    _inventory.AddItem(item);
                 }
             }
         }
@@ -252,7 +251,7 @@ public class GameManager : MonoBehaviour
 
     public void SavePlayerData()
     {
-        PlayerData playerSaveData = new PlayerData(_currentPlayerPrefab, PlayerSpawnTransform, PlayerStats.Instance, PlayerInventory.Instance, EquipmentManager.Instance, PlayerController.Instance, Instance);
+        PlayerData playerSaveData = new PlayerData(_currentPlayerPrefab, PlayerSpawnTransform, PlayerStats.Instance, Inventory.Instance, EquipmentManager.Instance, PlayerController.Instance, Instance);
 
         SaveSystem.SavePlayer(playerSaveData);
     }

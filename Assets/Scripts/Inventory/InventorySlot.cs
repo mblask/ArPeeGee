@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
@@ -13,19 +10,27 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     [SerializeField] private Item _item;
 
-    //[SerializeField] private ItemTooltip _tooltip;
+    private ItemTooltip _itemTooltip;
+    private Inventory _inventory;
 
-    //private void Awake()
-    //{
-    //    if (_tooltip == null)
-    //        _tooltip = FindObjectOfType<ItemTooltip>();
-    //}
+    private void OnEnable()
+    {
+        _itemTooltip = ItemTooltip.Instance;
+        _inventory = Inventory.Instance;
+    }
 
     public void AddItemToInventorySlot(Item newItem)
     {
+        Debug.Log($"AddItemToInventorySlot, newItem is null {newItem == null}");
+        if (newItem == null)
+            return;
+
         _item = newItem;
 
-        Icon.sprite = newItem.ItemImage;
+        Debug.Log($"AddItemToInventorySlot, item: {_item}");
+        Debug.Log($"AddItemToInventorySlot, itemImage: {_item.ItemImage}");
+
+        Icon.sprite = _item.ItemImage;
         Icon.enabled = true;
         Icon.preserveAspect = true;
 
@@ -44,15 +49,15 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public void OnRemoveButton()
     {
-        Inventory.Instance.ThrowItem(_item);
+        _inventory.ThrowItem(_item);
     }
 
     public void UseItem()
     {
-        if (_item != null)
-        {
-            _item.Use();
-        }
+        if (_item == null)
+            return;
+        
+        _item.Use();
     }
 
     public Item GetItem()
@@ -67,19 +72,21 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public void OnPointerEnter(PointerEventData pointerEventData)
     {
-        if (_item != null/* && _item is Equipment*/)
-        {
-            ItemTooltip.Instance.transform.position = pointerEventData.position;
-            ItemTooltip.Instance.ShowItemTooltip(_item);
+        if (_itemTooltip == null)
+            _itemTooltip = ItemTooltip.Instance;
 
-            //_tooltip.transform.position = pointerEventData.position;
-            //_tooltip.ShowItemTooltip(/*(Equipment)*/_item);
+        if (_item != null)
+        {
+            _itemTooltip.transform.position = pointerEventData.position;
+            _itemTooltip.ShowItemTooltip(_item);
         }
     }
 
     public void OnPointerExit(PointerEventData pointerEventData)
     {
-        ItemTooltip.Instance.HideItemTooltip();
-        //_tooltip.HideItemTooltip();
+        if (_itemTooltip == null)
+            _itemTooltip = ItemTooltip.Instance;
+
+        _itemTooltip.HideItemTooltip();
     }
 }

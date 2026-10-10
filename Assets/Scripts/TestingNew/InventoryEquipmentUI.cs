@@ -15,13 +15,14 @@ public class InventoryEquipmentUI : MonoBehaviour
     }
 
     public event Action<Equipment> OnWeaponChanged;
+    public event Action<Equipment> OnWeaponRemoved;
 
     public event Action OnInventoryUIClose;
 
     private Transform _container;
     private InventorySlot[] _inventorySlots;
     private EquippedSlot[] _equipmentSlots;
-    private PlayerInventory _playerInventory;
+    private Inventory _inventory;
     private PlayerEquipment _playerEquipment;
 
     private void Awake()
@@ -35,12 +36,12 @@ public class InventoryEquipmentUI : MonoBehaviour
         _inventorySlots = _container.Find("InventoryItems").GetComponentsInChildren<InventorySlot>();
         _equipmentSlots = _container.Find("EquippedItems").GetComponentsInChildren<EquippedSlot>();
 
-        _playerInventory = PlayerInventory.Instance;
+        _inventory = Inventory.Instance;
         _playerEquipment = PlayerEquipment.Instance;
 
         UpdateInventoryUI();
         UpdateEquipmentUI();
-        _playerInventory.onInventoryItemsChanged += UpdateInventoryUI;
+        _inventory.onInventoryItemsChanged += UpdateInventoryUI;
         _playerEquipment.onEquipmentChanged += UpdateEquipmentUI;
 
         _container.gameObject.SetActive(false);
@@ -66,11 +67,12 @@ public class InventoryEquipmentUI : MonoBehaviour
 
     public void UpdateInventoryUI()
     {
+        Debug.Log("UpdateInventoryUI");
         for (int i = 0; i < _inventorySlots.Length; i++)
         {
-            if (i < _playerInventory.GetItems().Count)
+            if (i < _inventory.GetItems().Count)
             {
-                _inventorySlots[i].AddItemToInventorySlot(_playerInventory.GetItems()[i]);
+                _inventorySlots[i].AddItemToInventorySlot(_inventory.GetItems()[i]);
             }
             else
             {
@@ -86,8 +88,19 @@ public class InventoryEquipmentUI : MonoBehaviour
 
         for (int i = 0; i < _equipmentSlots.Length; i++)
         {
-            Equipment equipment = equipSlots[i].GetItem() as Equipment;
+            Item item = equipSlots[i].GetItem();
+            Equipment equipment = item as Equipment;
 
+            //Removing the item from equipped slot
+            if (equipment == null && _equipmentSlots[i].Item != null)
+            {
+                if (_equipmentSlots[i].Slot.Equals(EquipmentSlot.Weapon))
+                    OnWeaponRemoved?.Invoke(_equipmentSlots[i].Item);
+
+                _equipmentSlots[i].ClearSlot();
+            }
+
+            //Adding the item to equipped slot
             if (equipment != null)
             {
                 _equipmentSlots[i].ClearSlot();

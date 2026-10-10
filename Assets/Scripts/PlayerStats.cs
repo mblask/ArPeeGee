@@ -356,6 +356,9 @@ public class PlayerStats : MonoBehaviour
 
     public void UpdateStats(Equipment equipment)
     {
+        if (equipment == null)
+            return;
+
         TotalHealth.AddModifier(equipment.HealthModifier);
         UpdateHealthSlider();
         TotalMagic.AddModifier(equipment.MagicModifier);

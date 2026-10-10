@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class Inventory : MonoBehaviour
@@ -53,6 +52,10 @@ public class Inventory : MonoBehaviour
 
     public bool AddItem(Item item)
     {
+        if (item == null)
+            return true;
+
+        Debug.Log($"AddItem, item null: {item == null}");
         if (IsFull())
         {
             if (onInventoryFull != null)
@@ -61,8 +64,11 @@ public class Inventory : MonoBehaviour
             return false;
         }
 
+        Debug.Log($"Inventory items: {_items.Count}");
         _items.Add(item);
+        Debug.Log($"Inventory items: {_items.Count}");
 
+        Debug.Log($"Inventory: onInventoryItemsChanged null {onInventoryItemsChanged == null}");
         if (onInventoryItemsChanged != null)
             onInventoryItemsChanged.Invoke();
 
@@ -97,10 +103,9 @@ public class Inventory : MonoBehaviour
 
         Vector2 dropPosition = (Vector2)transform.position + Vector2.down * ThrowDistance;
         GameObject thrownItem = Instantiate(item.ItemPrefab, dropPosition, Quaternion.identity);
-        /**/
-        thrownItem.GetComponent<ItemPickup>().Item = item;
-        thrownItem.GetComponent<SpriteRenderer>().sprite = item.ItemImage;
-        /**/
+
+        thrownItem.GetComponent<ItemPickup>().SetItem(item);
+        //thrownItem.GetComponent<SpriteRenderer>().sprite = item.ItemImage;
 
         RemoveItem(item);
     }
@@ -112,7 +117,7 @@ public class Inventory : MonoBehaviour
         {
             if (item is Consumable && item.ItemName.Contains(type.ToString()))
             {
-                potion = (Consumable)item;
+                //potion = (Consumable)item;
                 potion.Use();
                 break;
             }
