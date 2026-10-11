@@ -17,9 +17,6 @@ public class GameManager : MonoBehaviour
     [Header("Game Camera")]
     public GameObject MainCamera;
 
-    //[Header("Drop Treasure Controller")]
-    //public DropTreasure DropTreasureController;
-
     [Header("Game Cursors")]
     public Texture2D DefaultCursor;
     public Texture2D InteractableCursor;
@@ -47,6 +44,10 @@ public class GameManager : MonoBehaviour
     private bool _equipmentSetUp;
     private bool _playerManuallyAddedToLevel = false;
 
+    private PlayerController _playerController;
+    private PlayerEquipment _playerEquipment;
+    private PlayerStats _playerStats;
+
     #region Singleton
     private void Awake()
     {
@@ -71,6 +72,13 @@ public class GameManager : MonoBehaviour
             _mainCameraFollowTarget.SetTargetToFollow(_playerObject.transform);
     }
 
+    private void OnEnable()
+    {
+        _playerController = PlayerController.Instance;
+        _playerEquipment = PlayerEquipment.Instance;
+        _playerStats = PlayerStats.Instance;
+    }
+
     private void Update()
     {
         if (!_equipmentSetUp && PlayerData.EquippedItems != null && _playerManuallyAddedToLevel == false)
@@ -83,7 +91,10 @@ public class GameManager : MonoBehaviour
 
     private void SetupPlayer()
     {
-        PlayerStats.Instance.UpdateToLevelAndExperience(PlayerData.CurrentPlayerLevel, PlayerData.CurrentExperience);
+        if (_playerStats == null)
+            _playerStats = PlayerStats.Instance;
+
+        _playerStats.UpdateToLevelAndExperience(PlayerData.CurrentPlayerLevel, PlayerData.CurrentExperience);
 
         if (PlayerData.InventoryItems != null)
             SetupInventory();
@@ -104,65 +115,74 @@ public class GameManager : MonoBehaviour
     private void SetupCurrentHealthAndMagic()
     {
         if (PlayerData.CurrentHealth == 0.0f)
-            PlayerStats.Instance.CurrentHealth = PlayerStats.Instance.TotalHealth.GetValue();
+            _playerStats.CurrentHealth = _playerStats.TotalHealth.GetValue();
         else
-            PlayerStats.Instance.CurrentHealth = PlayerData.CurrentHealth;
+            _playerStats.CurrentHealth = PlayerData.CurrentHealth;
 
         if (PlayerData.CurrentMagic == 0.0f)
-            PlayerStats.Instance.CurrentMagic = PlayerStats.Instance.TotalMagic.GetValue();
+            _playerStats.CurrentMagic = _playerStats.TotalMagic.GetValue();
         else
-            PlayerStats.Instance.CurrentMagic = PlayerData.CurrentMagic;
+            _playerStats.CurrentMagic = PlayerData.CurrentMagic;
 
-        PlayerStats.Instance.UpdateHealthSlider();
-        PlayerStats.Instance.UpdateMagicSlider();
+        _playerStats.UpdateHealthSlider();
+        _playerStats.UpdateMagicSlider();
     }
 
     public void GeneratePlayer()
     {
         _playerObject = GameObject.FindGameObjectWithTag("Player");
 
-        if (_playerObject == null)
-        {
-            _playerManuallyAddedToLevel = false;
-
-            LoadPlayerData();
-
-            foreach (GameObject playerObject in PlayerPrefabs)
-            {
-                if (playerObject.gameObject.name == PlayerData.PlayerObjectName)
-                {
-                    _currentPlayerPrefab = playerObject;
-                    break;
-                }
-            }
-
-            _playerObject = SpawnPlayer(PlayerSpawnTransform);
-
-            _timePassedInTheGame = PlayerData.GameTime;
-            _enemiesKilled = PlayerData.EnemiesKilled;
-        }
-        else
+        if (_playerObject != null)
         {
             _playerManuallyAddedToLevel = true;
+            return;
         }
+
+        _playerManuallyAddedToLevel = false;
+
+        LoadPlayerData();
+
+        foreach (GameObject playerObject in PlayerPrefabs)
+        {
+            if (playerObject.gameObject.name != PlayerData.PlayerObjectName)
+                continue;
+
+            _currentPlayerPrefab = playerObject;
+            break;
+        }
+
+        _playerObject = SpawnPlayer(PlayerSpawnTransform);
+
+        _timePassedInTheGame = PlayerData.GameTime;
+        _enemiesKilled = PlayerData.EnemiesKilled;
     }    
 
     public void SetupEquipment()
     {
-        if (EquipmentManager.Instance.CurrentEquipment.Length == 0)
+        if (_playerEquipment == null)
+            _playerEquipment = PlayerEquipment.Instance;
+
+        if (_playerEquipment.GetEquipSlots() == null || _playerEquipment.GetEquipSlots().Count == 0)
             _equipmentSetUp = false;
 
-        if (PlayerData != null)
+        if (PlayerData == null)
+            return;
+
+        foreach (string itemName in PlayerData.EquippedItems)
         {
-            foreach (string itemName in PlayerData.EquippedItems)
+            foreach (Item item in Treasure)
             {
-                foreach (Item item in Treasure)
+                if (item.ItemName != itemName)
+                    continue;
+
+                Equipment equipmentItem = item as Equipment;
+                if (equipmentItem == null)
                 {
-                    if (item.ItemName != itemName)
-                        continue;
-                    
-                    EquipmentManager.Instance.Equip(item as Equipment);
+                    Debug.LogError($"SetupEquipment, item {item.ItemName} is not Equipment item");
+                    continue;
                 }
+
+                _playerEquipment.EquipItem(equipmentItem);
             }
         }
     }
@@ -209,49 +229,48 @@ public class GameManager : MonoBehaviour
 
     public void SetupLearnedSpellsAndAbilities()
     {
-        if (PlayerData.LearnedSpells != null)
-        {
-            foreach (string learnedSpell in PlayerData.LearnedSpells)
-            {
-                foreach (GameObject playerSpell in PlayerController.Instance.AllPlayerSpells)
-                {
-                    if (learnedSpell == playerSpell.name)
-                    {
-                        if (PlayerController.Instance.LearnedSpells.Contains(playerSpell))
-                            continue;
+        if (PlayerData.LearnedSpells == null)
+            return;
 
-                        PlayerController.Instance.LearnedSpells.Add(playerSpell);
-                    }
-                }
+        foreach (string learnedSpell in PlayerData.LearnedSpells)
+        {
+            foreach (GameObject playerSpell in _playerController.AllPlayerSpells)
+            {
+                if (learnedSpell != playerSpell.name)
+                    continue;
+
+                if (_playerController.LearnedSpells.Contains(playerSpell))
+                    continue;
+
+                _playerController.LearnedSpells.Add(playerSpell);
             }
         }
     }
 
     public GameObject SpawnPlayer(Transform spawnPosition)
     {
-        if (_currentPlayerPrefab == null)
+        GameObject player;
+        if (_currentPlayerPrefab != null)
         {
-            _currentPlayerPrefab = PlayerPrefabs[1];
-
-            if (_currentPlayerPrefab == null || spawnPosition == null)
-            {
-                Debug.LogWarning("Either PlayerPrefab or SpawnPosition missing");
-                return null;
-            }
-
-            GameObject player = Instantiate(PlayerPrefabs[0], spawnPosition.position, Quaternion.identity);
+            player = Instantiate(_currentPlayerPrefab, spawnPosition.position, Quaternion.identity);
             return player;
         }
-        else
+
+        _currentPlayerPrefab = PlayerPrefabs[1];
+
+        if (_currentPlayerPrefab == null || spawnPosition == null)
         {
-            GameObject player = Instantiate(_currentPlayerPrefab, spawnPosition.position, Quaternion.identity);
-            return player;
+            Debug.LogWarning("Either PlayerPrefab or SpawnPosition missing");
+            return null;
         }
+
+        player = Instantiate(PlayerPrefabs[0], spawnPosition.position, Quaternion.identity);
+        return player;
     }
 
     public void SavePlayerData()
     {
-        PlayerData playerSaveData = new PlayerData(_currentPlayerPrefab, PlayerSpawnTransform, PlayerStats.Instance, Inventory.Instance, EquipmentManager.Instance, PlayerController.Instance, Instance);
+        PlayerData playerSaveData = new PlayerData(_currentPlayerPrefab, PlayerSpawnTransform, PlayerStats.Instance, Inventory.Instance, PlayerEquipment.Instance, PlayerController.Instance, Instance);
 
         SaveSystem.SavePlayer(playerSaveData);
     }

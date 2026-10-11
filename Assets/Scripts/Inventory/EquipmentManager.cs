@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class EquipmentManager : MonoBehaviour
 {
@@ -21,15 +22,12 @@ public class EquipmentManager : MonoBehaviour
     public delegate void OnEquipmentChanged(Equipment newItem, Equipment oldItem);
     public OnEquipmentChanged onEquipmentChanged;
 
-    [SerializeField] private Equipment[] _currentEquipment;
+    [SerializeField] private List<Equipment> _currentEquipment;
     private Inventory _inventory;
     private EquippedSlot[] _equippedSlots;
-    public Equipment[] CurrentEquipment => _currentEquipment;
+    public List<Equipment> CurrentEquipment => _currentEquipment;
 
     private AudioManager _audioManager;
-
-    //private GameObject _equippedItems;
-    //private const string EquippedItemsName = "EquippedItems";
 
     private int _numPlayerEquipSlots;
 
@@ -41,7 +39,8 @@ public class EquipmentManager : MonoBehaviour
         _equippedSlots = EquippedItems.GetComponentsInChildren<EquippedSlot>();
 
         _numPlayerEquipSlots = _equippedSlots.Length;
-        _currentEquipment = new Equipment[_numPlayerEquipSlots];
+        //_currentEquipment = new Equipment[_numPlayerEquipSlots];
+        _currentEquipment = new List<Equipment>(_numPlayerEquipSlots);
     }
 
     public bool Equip(Equipment newItem)
@@ -174,7 +173,7 @@ public class EquipmentManager : MonoBehaviour
 
     public void UneqipAll()
     {
-        for (int i = 0; i < _currentEquipment.Length; i++)
+        for (int i = 0; i < _currentEquipment.Count; i++)
             Unequip(i);
     }   
 }

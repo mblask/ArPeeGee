@@ -16,7 +16,8 @@ public class PlayerEquipment : MonoBehaviour
         }
     }
 
-    [SerializeField] private List<EquipSlot> _equipSlots = new List<EquipSlot>();
+    [SerializeField]
+    private List<EquipSlot> _equipSlots = new List<EquipSlot>();
 
     private Inventory _inventory;
 

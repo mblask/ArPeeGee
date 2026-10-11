@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 [System.Serializable]
@@ -17,8 +19,7 @@ public class PlayerData
     public float GameTime;
     public int EnemiesKilled;
 
-
-    public PlayerData(GameObject playerPrefab, Transform playerSpawnPoint, PlayerStats playerStats, Inventory inventory, EquipmentManager equipment, PlayerController controller, GameManager gameManager)
+    public PlayerData(GameObject playerPrefab, Transform playerSpawnPoint, PlayerStats playerStats, Inventory inventory, PlayerEquipment equipment, PlayerController controller, GameManager gameManager)
     {
         PlayerObjectName = playerPrefab.gameObject.name;
 
@@ -60,15 +61,17 @@ public class PlayerData
 
         if (equipment != null)
         {
-            int equippedItemsCount = equipment.CurrentEquipment.Length;
+            List<EquipSlot> equipSlots = equipment.GetEquipSlots();
+            int equippedItemsCount = equipSlots.Count;
             EquippedItems = new string[equippedItemsCount];
 
             for (int i = 0; i < equippedItemsCount; i++)
             {
-                if (equipment.CurrentEquipment[i] == null)
+                EquipSlot slot = equipSlots[i];
+                if (slot == null || slot.GetItem() == null)
                     EquippedItems[i] = "";
                 else
-                    EquippedItems[i] = equipment.CurrentEquipment[i].ItemName;
+                    EquippedItems[i] = slot.GetItem().ItemName;
             }
         }
 

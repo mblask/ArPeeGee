@@ -117,7 +117,7 @@ public class Inventory : MonoBehaviour
         {
             if (item is Consumable && item.ItemName.Contains(type.ToString()))
             {
-                //potion = (Consumable)item;
+                potion = (Consumable)item;
                 potion.Use();
                 break;
             }

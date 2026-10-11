@@ -6316,6 +6316,21 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2180956357869847941, guid: aec5ed70cb1c74c4b874871d03b0a47e,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2180956357869847941, guid: aec5ed70cb1c74c4b874871d03b0a47e,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2180956357869847941, guid: aec5ed70cb1c74c4b874871d03b0a47e,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2180956357869847942, guid: aec5ed70cb1c74c4b874871d03b0a47e,
         type: 3}
       propertyPath: m_Enabled
