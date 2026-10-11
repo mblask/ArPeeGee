@@ -14,7 +14,7 @@ public class Inventory : MonoBehaviour
     }
 
     public int Size = 12;
-    public List<Item> _items;
+    private List<Item> _items;
     public float ThrowDistance = 0.0f;
 
     public delegate void OnInventoryItemsChanged();
@@ -137,6 +137,9 @@ public class Inventory : MonoBehaviour
 
     public List<Item> GetItems()
     {
+        if (_items == null)
+            _items = new List<Item>();
+
         return _items;
     }
 }

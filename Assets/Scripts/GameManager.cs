@@ -32,7 +32,6 @@ public class GameManager : MonoBehaviour
     private GameObject _currentPlayerPrefab;
     private GameObject _playerObject;
     private FollowTarget _mainCameraFollowTarget;
-    private Camera _camera;
     private Inventory _inventory;
 
     private int _enemiesKilled = 0;
@@ -59,8 +58,6 @@ public class GameManager : MonoBehaviour
         GeneratePlayer();
 
         Time.timeScale = 1.0f;
-
-        _camera = Camera.main;
     }
     #endregion
 
@@ -170,20 +167,32 @@ public class GameManager : MonoBehaviour
 
         foreach (string itemName in PlayerData.EquippedItems)
         {
-            foreach (Item item in Treasure)
+            Item item = GetItemFromTreasure(itemName);
+            if (item == null)
+                continue;
+
+            Equipment equipmentItem = item as Equipment;
+            if (equipmentItem == null)
             {
-                if (item.ItemName != itemName)
-                    continue;
-
-                Equipment equipmentItem = item as Equipment;
-                if (equipmentItem == null)
-                {
-                    Debug.LogError($"SetupEquipment, item {item.ItemName} is not Equipment item");
-                    continue;
-                }
-
-                _playerEquipment.EquipItem(equipmentItem);
+                Debug.LogError($"SetupEquipment, item {item.ItemName} is not Equipment item");
+                continue;
             }
+
+            _playerEquipment.EquipItem(equipmentItem);
+            //foreach (Item item in Treasure)
+            //{
+            //    if (item.ItemName != itemName)
+            //        continue;
+            //
+            //    Equipment equipmentItem = item as Equipment;
+            //    if (equipmentItem == null)
+            //    {
+            //        Debug.LogError($"SetupEquipment, item {item.ItemName} is not Equipment item");
+            //        continue;
+            //    }
+            //
+            //    _playerEquipment.EquipItem(equipmentItem);
+            //}
         }
     }
 
@@ -192,39 +201,65 @@ public class GameManager : MonoBehaviour
         if (_inventory == null)
             _inventory = Inventory.Instance;
 
-        if (_inventory._items.Count != 0)
+        if (_inventory.GetItems().Count != 0)
             _inventory.RemoveAllItems();
 
         if (PlayerData != null)
         {
             foreach (string itemName in PlayerData.InventoryItems)
             {
-                foreach (Item item in Treasure)
-                {
-                    if (item.ItemName != itemName)
-                        continue;
-                    
-                    _inventory.AddItem(item);
-                }
+                Item item = GetItemFromTreasure(itemName);
+                if (item == null)
+                    continue;
+
+                _inventory.AddItem(item);
+                //foreach (Item item in Treasure)
+                //{
+                //    if (item.ItemName != itemName)
+                //        continue;
+                //    
+                //    _inventory.AddItem(item);
+                //}
             }
         }
 
-        if (_inventory._items.Count != 0)
+        /*if (_inventory.GetItems().Count != 0)
             _inventory.RemoveAllItems();
 
         if (PlayerData != null)
         {
             foreach (string itemName in PlayerData.InventoryItems)
             {
-                foreach (Item item in Treasure)
-                {
-                    if (item.ItemName != itemName)
-                        continue;
-                    
-                    _inventory.AddItem(item);
-                }
+                Item item = GetItemFromTreasure(itemName);
+                if (item == null)
+                    continue;
+
+                _inventory.AddItem(item);
+                //foreach (Item item in Treasure)
+                //{
+                //    if (item.ItemName != itemName)
+                //        continue;
+                //    
+                //    _inventory.AddItem(item);
+                //}
             }
+        }*/
+    }
+
+    private Item GetItemFromTreasure(string itemName)
+    {
+        if (string.IsNullOrEmpty(itemName))
+            return null;
+
+        foreach (Item item in Treasure)
+        {
+            if (item.ItemName != itemName)
+                continue;
+
+            return item;
         }
+
+        return null;
     }
 
     public void SetupLearnedSpellsAndAbilities()

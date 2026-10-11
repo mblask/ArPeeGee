@@ -36,43 +36,36 @@ public class WeaponSlot : MonoBehaviour
     {
         if (newItem != null)
         {
-            if (newItem.EquipmentSlot == EquipmentSlot.Weapon)
-            {
-                if (oldItem == null)
-                {
-                    //Equip into empty
-                    SetupWeapon(newItem);
-                }
-
-                if (oldItem != null)
-                {
-                    //Replace existing with new
-                    RemoveAllWeapons();
-                    SetupWeapon(newItem);
-                }
-            }
-            else
-            {
-                //Item(s) not adequate
+            //Item(s) not adequate
+            if (newItem.EquipmentSlot != EquipmentSlot.Weapon)
                 return;
+
+            if (oldItem == null)
+            {
+                //Equip into empty
+                SetupWeapon(newItem);
+            }
+
+            if (oldItem != null)
+            {
+                //Replace existing with new
+                RemoveAllWeapons();
+                SetupWeapon(newItem);
             }
         }
 
         if (newItem == null)
         {
-            if (oldItem != null)
-            {
-                if (oldItem.EquipmentSlot == EquipmentSlot.Weapon)
-                {
-                    //Unequip weapon
-                    RemoveAllWeapons();
-                }
-                else
-                {
-                    //Item(s) not adequate
-                    return;
-                }
-            }
+            //If newItem == nul and oldItem == null, do nothing
+            if (oldItem == null)
+                return;
+
+            //Item(s) not adequate
+            if (oldItem.EquipmentSlot != EquipmentSlot.Weapon)
+                return;
+
+            //Unequip weapon
+            RemoveAllWeapons();
         }
     }
 
@@ -146,13 +139,13 @@ public class WeaponSlot : MonoBehaviour
         _audioManager.SFXAudioSource.PlayOneShot(_audioManager.WeaponSwingAudioClip);
 
         Collider2D[] hitColliders = Physics2D.OverlapCircleAll(AttackPoint.position, _weaponItem.AttackRange, EnemyLayerMask);
-        if (hitColliders.Length > 0)
+        if (hitColliders.Length <= 0)
+            return;
+
+        if (IsHitting(hitColliders[0].GetComponent<EnemyStats>().TotalEnemyArmor.GetValue()))
         {
-            if (IsHitting(hitColliders[0].GetComponent<EnemyStats>().TotalEnemyArmor.GetValue()))
-            {
-                _audioManager.SFXAudioSource.PlayOneShot(_audioManager.WeaponHitAudioClip);
-                hitColliders[0].GetComponent<EnemyStats>().DamageManager(_playerStats.TotalDamage.GetValue());
-            }
+            _audioManager.SFXAudioSource.PlayOneShot(_audioManager.WeaponHitAudioClip);
+            hitColliders[0].GetComponent<EnemyStats>().DamageManager(_playerStats.TotalDamage.GetValue());
         }
     }
 
@@ -163,14 +156,7 @@ public class WeaponSlot : MonoBehaviour
 
         float missChance = Random.Range(0, 100) / 100.0f;
 
-        if (hitChance > missChance)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return hitChance > missChance;
     }
 
     public bool IsEquipped()

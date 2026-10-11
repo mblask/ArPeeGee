@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -50,12 +49,12 @@ public class PlayerData
 
         if (inventory != null)
         {
-            int itemCount = inventory._items.Count;
+            int itemCount = inventory.GetItems().Count;
             InventoryItems = new string[itemCount];
 
             for (int i = 0; i < itemCount; i++)
             {
-                InventoryItems[i] = inventory._items[i].ItemName;
+                InventoryItems[i] = inventory.GetItems()[i].ItemName;
             }
         }
 

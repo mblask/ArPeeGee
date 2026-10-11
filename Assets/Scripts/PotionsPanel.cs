@@ -28,37 +28,45 @@ public class PotionsPanel : MonoBehaviour
 
     public void UpdatePotionsPanel()
     {
-        _healthPotionNumber = CheckForPotions(PotionType.Health);
-        _magicPotionNumber = CheckForPotions(PotionType.Magic);
+        UpdateHealthPotionsPanel();
+        UpdateMagicPotionsPanel();
+    }
 
-        if (_healthPotionNumber != 0)
+    private void UpdateHealthPotionsPanel()
+    {
+        _healthPotionNumber = CheckForPotions(PotionType.Health);
+
+        if (_healthPotionNumber > 0)
         {
             HealthPotionNumber.text = _healthPotionNumber.ToString();
             HealthPotionImage.color = activeColor;
-        }
-        else
-        {
-            HealthPotionNumber.text = "0";
-            HealthPotionImage.color = inactiveColor;
+            return;
         }
 
-        if (_magicPotionNumber != 0)
+        HealthPotionNumber.text = "0";
+        HealthPotionImage.color = inactiveColor;
+    }
+
+    private void UpdateMagicPotionsPanel()
+    {
+        _magicPotionNumber = CheckForPotions(PotionType.Magic);
+
+        if (_magicPotionNumber > 0)
         {
             MagicPotionNumber.text = _magicPotionNumber.ToString();
             MagicPotionImage.color = activeColor;
+            return;
         }
-        else
-        {
-            MagicPotionNumber.text = "0";
-            MagicPotionImage.color = inactiveColor;
-        }
+        
+        MagicPotionNumber.text = "0";
+        MagicPotionImage.color = inactiveColor;
     }
 
     private int CheckForPotions(PotionType type)
     {
         int potionCount = 0;
 
-        foreach (Item item in _inventory._items)
+        foreach (Item item in _inventory.GetItems())
         {
             if (item is Consumable)
             {

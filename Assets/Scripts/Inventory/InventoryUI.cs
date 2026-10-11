@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class InventoryUI : MonoBehaviour
 {
@@ -70,12 +71,13 @@ public class InventoryUI : MonoBehaviour
     public void UpdateUI()
     {
         Debug.Log("UpdateUI");
-        Debug.Log($"Inventory items: {_inventory._items.Count}");
+        Debug.Log($"Inventory items: {_inventory.GetItems().Count}");
+        List<Item> inventoryItems = _inventory.GetItems();
         for (int i = 0; i < _slots.Length; i++)
         {
-            if (i < _inventory._items.Count)
+            if (i < inventoryItems.Count)
             {
-                Item item = _inventory._items[i];
+                Item item = inventoryItems[i];
                 Debug.Log($"Item number {i}, item: {item}");
                 _slots[i].AddItemToInventorySlot(item);
             }
